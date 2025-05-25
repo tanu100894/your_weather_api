@@ -4,17 +4,22 @@ import pandas as pd
 # Create Website object instances
 app = Flask(__name__)
 
+
 # Connect HTML pages
 @app.route("/")
 def home():
     return render_template("home.html")
 
-@app.route("/api/v1/<station>/<date>")
+
+@app.route("/api/v1/<station>/<date>/")
 def about(station, date):
-    temperature = 23
+    filename = "data_small/TG_STAID" + str(station).zfill(6) + ".txt"
+    df = pd.read_csv(filename, skiprows=20, parse_dates=["    DATE"])
+    temperature = df.loc[df['    DATE'] == date]['   TG'].squeeze() / 10
     return {"station": station,
             "date": date,
             "temperature": temperature}
+
 
 # To run the app if only main.py is executed directly
 # nd check for any errors in the web page
